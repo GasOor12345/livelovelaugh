@@ -1,0 +1,38 @@
+name: Build VST3 (Windows)
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure
+        run: cmake -S . -B build -A x64
+
+      - name: Build
+        run: cmake --build build --config Release --parallel --target LiveLoveLaugh_VST3 engine_test Snapshot
+
+      - name: Engine tests
+        run: build/Release/engine_test.exe
+
+      - name: Render pedal snapshot
+        shell: bash
+        run: |
+          exe=$(find build -name Snapshot.exe | head -1)
+          "$exe"
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: LiveLoveLaugh-VST3-Windows
+          path: build/LiveLoveLaugh_artefacts/Release/VST3/
+
+      - name: Upload snapshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: pedal-snapshot
+          path: pedal_*.png
