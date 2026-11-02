@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   windows:
     runs-on: windows-latest
@@ -36,3 +39,27 @@ jobs:
         with:
           name: pedal-snapshot
           path: pedal_*.png
+
+      - name: Package zip
+        shell: pwsh
+        run: Compress-Archive -Path "build/LiveLoveLaugh_artefacts/Release/VST3/Live Love Laugh.vst3" -DestinationPath LiveLoveLaugh-Windows.zip
+
+      - name: Publish release (direct download link)
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.0.${{ github.run_number }}
+          name: Live Love Laugh v1.0.${{ github.run_number }}
+          body: "Download LiveLoveLaugh-Windows.zip, pak uit en zet de map 'Live Love Laugh.vst3' in C:\\Program Files\\Common Files\\VST3"
+          files: LiveLoveLaugh-Windows.zip
+          make_latest: true
+
+      - name: Push snapshot to 'snapshots' branch
+        if: github.ref == 'refs/heads/main'
+        shell: bash
+        run: |
+          mkdir snap && cp pedal_*.png snap/ && cd snap
+          git init -q -b snapshots
+          git add .
+          git -c user.name=ci -c user.email=ci@users.noreply.github.com commit -qm "UI snapshot ${{ github.sha }}"
+          git push -f "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}" snapshots
