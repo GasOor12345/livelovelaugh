@@ -127,10 +127,10 @@ void FootSwitch::paintButton (Graphics& g, bool highlighted, bool down)
     g.fillRoundedRectangle (title, 8.0f);
     g.setColour (body);
     g.setFont (serif (31.0f));
-    g.drawText ("live love laugh", title.withTrimmedBottom (22.0f), Justification::centredBottom);
+    g.drawText ("live love laugh", title.withTrimmedBottom (26.0f), Justification::centredBottom);
     g.setFont (sans (11.0f));
     g.setColour (body.withAlpha (0.65f));
-    g.drawText ("d r e a m   d e l a y", title.withTrimmedTop (48.0f), Justification::centredTop);
+    g.drawText ("d r e a m   d e l a y", title.withTrimmedTop (54.0f), Justification::centredTop);
 
     drawSparkle (g, { title.getX() + 10.0f, title.getY() + 14.0f }, 5.0f, blush.withAlpha (0.9f));
     drawSparkle (g, { title.getRight() - 12.0f, title.getBottom() - 16.0f }, 4.0f, lavender.withAlpha (0.9f));
